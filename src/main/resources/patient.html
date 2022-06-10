@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/fhirclient/build/fhir-client.js"></script>
+</head>
+<body>
+    <pre id="output">Loading...</pre>
+    <script>
+        function display(data) {
+            const output = document.getElementById("output");
+            output.innerText = data instanceof Error ?
+                String(data) :
+                JSON.stringify(data, null, 4);
+        }
+
+        const client = new FHIR.client("http://localhost:8080/fhir");
+        client.request("Patient/1")
+            .then(display)
+            .catch(display);
+    </script>
+</body>
+</html>
