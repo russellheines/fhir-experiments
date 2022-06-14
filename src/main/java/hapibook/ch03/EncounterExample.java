@@ -23,11 +23,11 @@ public class EncounterExample {
 
         encounter.addIdentifier().setValue("G00000010001").setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/COCNV");
 
-        encounter.setClass_(new Coding().setCode("AMB").setSystem("http://terminology.hl7.org/ValueSet/v3-ActEncounterCode"));
+        encounter.setClass_(new Coding().setCode("AMB").setSystem("http://terminology.hl7.org/CodeSystem/v3-ActCode"));
 
         CodeableConcept type = encounter.addType();
-        type.addCoding().setCode("REF").setSystem("https://fhir.experiments.com/System/MeditechPatientType/COCNV");
         type.addCoding().setCode("DEP").setSystem("https://fhir.experiments.com/System/MeditechAccountStatus");
+        type.addCoding().setCode("REF").setSystem("https://fhir.experiments.com/System/MeditechPatientType");
 
         encounter.setSubject(new Reference("Patient/COCNV-G000000852"));
 
@@ -36,8 +36,9 @@ public class EncounterExample {
 
         try {
             Period period = new Period();
-            period.setStart(new SimpleDateFormat("yyyyMMddhhmm").parse("201908281438"));
-            period.setEnd(new SimpleDateFormat("yyyyMMddhhmm").parse("201908281438"));
+            period.setStart(new SimpleDateFormat("yyyyMMddhhmmss").parse("20190828143800"));
+            period.setEnd(new SimpleDateFormat("yyyyMMddhhmmss").parse("20190828143800"));
+            encounter.setPeriod(period);
         }
         catch (ParseException e) {
             e.printStackTrace();

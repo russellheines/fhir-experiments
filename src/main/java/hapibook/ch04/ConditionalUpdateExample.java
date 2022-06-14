@@ -29,7 +29,7 @@ public class ConditionalUpdateExample {
         unit.addIdentifier().setValue("J.SOLIS").setSystem("https://fhir.experiments.com/LocationType/UNIT");
 
         Practitioner attending = new Practitioner();
-        attending.addIdentifier().setValue("PROVIDER.SIALBJA").setSystem("https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA");
+        attending.addIdentifier().setValue("DRCPOE").setSystem("https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA");
 
         Encounter encounter = new Encounter();
         encounter.addIdentifier().setValue("J000440201:J516754:20190826.0932:REF:J00021227198").setSystem("https://fhir.experiments.com/EncounterAlias/BACKENDID/HCA:KYA:COCQA1A");
@@ -61,7 +61,7 @@ public class ConditionalUpdateExample {
         //encounter.setSubject(new Reference("Patient?identifier=https://fhir.experiments.com/PatientAlias/BACKENDID/HCA:KYA|J516754"));
         //encounter.addLocation().setLocation(new Reference("Location?identifier=https://fhir.experiments.com/LocationType/FACILITY|COCQA1A"));
         //encounter.addLocation().setLocation(new Reference("Location?identifier=https://fhir.experiments.com/LocationType/UNIT|J.SOLIS"));
-        //encounter.addParticipant().setIndividual(new Reference("Practitioner?identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|PROVIDER.SIALBJA"));
+        //encounter.addParticipant().setIndividual(new Reference("Practitioner?identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|DRCPOE"));
 
         // Create a bundle that will be used as a transaction
         Bundle bundle = new Bundle();
@@ -103,8 +103,8 @@ public class ConditionalUpdateExample {
                 .setFullUrl(attending.getId())
                 .setResource(attending)
                 .getRequest()
-                .setUrl("Practitioner?identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|PROVIDER.SIALBJA")
-                //.setIfNoneExist("identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|PROVIDER.SIALBJA")
+                .setUrl("Practitioner?identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|DRCPOE")
+                //.setIfNoneExist("identifier=https://fhir.experiments.com/PersonAlias/BACKENDID/HCA:KYA|DRCPOE")
                 .setMethod(Bundle.HTTPVerb.PUT);
 
         // Log the request

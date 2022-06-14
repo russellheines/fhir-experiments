@@ -11,11 +11,29 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <hapi-hl7v2.version>2.3</hapi-hl7v2.version>
         <hapi-fhir.version>5.4.0</hapi-fhir.version>
         <logback.version>1.2.3</logback.version>
     </properties>
 
     <dependencies>
+
+        <!-- HAPI HL7v2 -->
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-base</artifactId>
+            <version>${hapi-hl7v2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v21</artifactId>
+            <version>${hapi-hl7v2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ca.uhn.hapi</groupId>
+            <artifactId>hapi-structures-v251</artifactId>
+            <version>${hapi-hl7v2.version}</version>
+        </dependency>
 
         <!-- HAPI FHIR -->
         <dependency>
