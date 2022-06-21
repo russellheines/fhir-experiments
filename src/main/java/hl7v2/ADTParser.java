@@ -197,7 +197,7 @@ public class ADTParser {
 
             encounter = new Encounter();
             encounter.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" +  terser.get("MSH-4-3"))
+                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" + terser.get("MSH-4-3"))
                     .setValue(terser.get("PID-18"));
 
             if (terser.get("PV1-18") != null) {
