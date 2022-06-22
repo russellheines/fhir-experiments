@@ -48,8 +48,8 @@ public class ORMParser {
 
             patient = new Patient();
             patient.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4-2"))
-                    .setValue(terser.get("PID-3-1"));
+                    .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4"))
+                    .setValue(terser.get("PID-3"));
         }
     }
 
@@ -59,26 +59,26 @@ public class ORMParser {
 
             encounter = new Encounter();
             encounter.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" + terser.get("MSH-4-3"))
+                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" + terser.get("MSH-4"))
                     .setValue(terser.get("PID-18"));
         }
     }
 
     private void parseRequester() throws Exception {
 
-        if (terser.get("OBR-16-1") != null) {
+        if (terser.get("ORC-12-1") != null) {
 
             requester = new Practitioner();
-            requester.setId(terser.get("OBR-16-1"));
+            requester.setId(terser.get("ORC-12-1"));
 
-            if ((terser.get("OBR-16-2") != null) || (terser.get("OBR-16-3") != null)) {
+            if ((terser.get("ORC-12-2") != null) || (terser.get("ORC-12-3") != null)) {
 
                 HumanName humanName = requester.addName();
-                if (terser.get("OBR-16-2") != null) {
-                    humanName.setFamily(terser.get("OBR-16-2"));
+                if (terser.get("ORC-12-2") != null) {
+                    humanName.setFamily(terser.get("ORC-12-2"));
                 }
-                if (terser.get("OBR-16-3") != null) {
-                    humanName.addGiven(terser.get("OBR-16-3"));
+                if (terser.get("ORC-12-3") != null) {
+                    humanName.addGiven(terser.get("ORC-12-3"));
                 }
             }
         }
@@ -90,24 +90,24 @@ public class ORMParser {
         order.setIntent(ServiceRequest.ServiceRequestIntent.ORDER);
 
         order.addIdentifier()
-                .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4-3"))
-                .setValue(terser.get("OBR-2-1"));
+                .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4"))
+                .setValue(terser.get("ORC-3"));
 
         order.addIdentifier()
-                .setSystem("https://fhir.experiments.com/System/MeditechOrderNumber/" + terser.get("MSH-4-3"))
-                .setValue(terser.get("ORC-2"));
+                .setSystem("https://fhir.experiments.com/System/MeditechOrderNumber/" + terser.get("MSH-4"))
+                .setValue(terser.get("ZOA-2"));
 
         order.setStatus(ServiceRequest.ServiceRequestStatus.UNKNOWN);
         order.addExtension()
-                .setUrl("https://fhir.experiments.com/System/MeditechOrderStatus/" + terser.get("MSH-4-3"))
-                .setValue(new StringType(terser.get("OBR-25")));
+                .setUrl("https://fhir.experiments.com/System/MeditechOrderStatus/" + terser.get("MSH-4"))
+                .setValue(new StringType(terser.get("ORC-25")));
 
         try {
             Period period = new Period();
-            period.setStart(new SimpleDateFormat("yyyyMMddHHmmss").parse(terser.get("OBR-7")));
+            period.setStart(new SimpleDateFormat("yyyyMMddHHmm").parse(terser.get("ORC-7-4")));
             order.setOccurrence(period);
 
-            order.setAuthoredOn(new SimpleDateFormat("yyyyMMddHHmmss").parse(terser.get("ORC-9")));
+            order.setAuthoredOn(new SimpleDateFormat("yyyyMMddHHmm").parse(terser.get("ZOA-4")));
         }
         catch (ParseException e) {
             e.printStackTrace();
@@ -115,9 +115,13 @@ public class ORMParser {
 
         CodeableConcept codeConcept = new CodeableConcept();
         codeConcept.addCoding()
-                .setSystem("https://fhir.experiments.com/System/MeditechOrderType/" + terser.get("MSH-4-3"))
+                .setSystem("https://fhir.experiments.com/System/MeditechOrderType/" + terser.get("MSH-4"))
                 .setCode(terser.get("OBR-4-1"))
                 .setDisplay(terser.get("OBR-4-2"));
+        codeConcept.addCoding()
+                .setSystem("https://fhir.experiments.com/System/MeditechOrderCategory/" + terser.get("MSH-4"))
+                .setCode(terser.get("OBR-4-4"))
+                .setDisplay(terser.get("OBR-4-5"));
 
         order.setCode(codeConcept);
     }
