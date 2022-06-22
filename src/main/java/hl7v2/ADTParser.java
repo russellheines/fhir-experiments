@@ -45,10 +45,10 @@ public class ADTParser {
 
     private void parseFacility() throws Exception {
 
-        if (terser.get("MSH-4-3") != null) {
+        if (terser.get("MSH-4") != null) {
 
             facility = new Location();
-            facility.setId(terser.get("MSH-4-3"));
+            facility.setId(terser.get("MSH-4"));
 
             CodeableConcept facilityConcept = new CodeableConcept();
             facilityConcept.addCoding().setCode("bu").setSystem("http://terminology.hl7.org/CodeSystem/location-physical-type");
@@ -62,19 +62,14 @@ public class ADTParser {
 
         if (terser.get("PID-3") != null) {
             patient.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4-2"))
+                    .setSystem("https://fhir.experiments.com/System/MeditechMrn/" + terser.get("MSH-4"))
                     .setValue(terser.get("PID-3-1"));
         }
 
         if (terser.get("PID-4") != null) {
             patient.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechMrn/" + terser.get("MSH-4-3"))
+                    .setSystem("https://fhir.experiments.com/System/MeditechUrn/" + terser.get("MSH-4"))
                     .setValue(terser.get("PID-4-1"));
-        }
-        if (terser.get("PID-19") != null) {
-            patient.addIdentifier()
-                    .setSystem("http://hl7.org/fhir/sid/us-ssn")
-                    .setValue(terser.get("PID-19"));
         }
 
         if (terser.get("PID-5-1") != null || terser.get("PID-5-2") != null || terser.get("PID-5-3") != null) {
@@ -91,14 +86,16 @@ public class ADTParser {
             }
         }
 
-        if (terser.get("PID-6") != null) {
-            patient.addName()
-                    .setUse(HumanName.NameUse.MAIDEN)
-                    .setFamily(terser.get("PID-6"));
-        }
-
         if (terser.get("PID-8") != null) {
-            patient.setGender(Enumerations.AdministrativeGender.fromCode(terser.get("PID-8").toLowerCase()));
+            if ("F".equalsIgnoreCase(terser.get("PID-8"))) {
+                patient.setGender(Enumerations.AdministrativeGender.FEMALE);
+            }
+            else if ("M".equalsIgnoreCase(terser.get("PID-8"))) {
+                patient.setGender(Enumerations.AdministrativeGender.MALE);
+            }
+            else {
+                patient.setGender(Enumerations.AdministrativeGender.UNKNOWN);
+            }
         }
 
         try {
@@ -114,12 +111,6 @@ public class ADTParser {
                     .setSystem(ContactPoint.ContactPointSystem.PHONE)
                     .setUse(ContactPoint.ContactPointUse.HOME)
                     .setValue(terser.get("PID-13"));
-        }
-
-        if (terser.get("PID-16") != null) {
-            patient.getMaritalStatus()
-                    .addCoding().setCode(terser.get("PID-16").substring(0, 1)).
-                    setSystem("http://terminology.hl7.org/CodeSystem/v3-MaritalStatus");
         }
 
         if (terser.get("PID-11-1") != null || terser.get("PID-11-2") != null || terser.get("PID-11-3") != null
@@ -148,33 +139,32 @@ public class ADTParser {
             if (terser.get("NK1-3") != null) {
                 CodeableConcept nokRelationship = nok.addRelationship();
                 nokRelationship.addCoding().setCode("N").setSystem("http://terminology.hl7.org/CodeSystem/v2-0131");
-                nokRelationship.addCoding().setCode(terser.get("NK1-3").equalsIgnoreCase("MOTHER") ? "MTH" : null).setSystem("http://terminology.hl7.org/CodeSystem/v3-RoleCode");
             }
 
             if (terser.get("NK1-2") != null) {
                 HumanName nokName = new HumanName();
                 nokName.setUse(HumanName.NameUse.OFFICIAL);
-                nokName.setFamily(terser.get("NK1-2").split(",")[0]);
-                nokName.addGiven(terser.get("NK1-2").split(",")[1]);
+                nokName.setFamily(terser.get("NK1-2-1"));
+                nokName.addGiven(terser.get("NK1-2-2"));
                 nok.setName(nokName);
             }
 
             if (terser.get("NK1-4-1") != null || terser.get("NK1-4-2") != null || terser.get("NK1-4-3") != null
                     || terser.get("NK1-4-4") != null || terser.get("NK1-4-5") != null) {
                 Address nokAddress = new Address();
-                if (terser.get("PID-4-1") != null) {
+                if (terser.get("NK1-4-1") != null) {
                     nokAddress.addLine(terser.get("NK1-4-1"));
                 }
-                if (terser.get("PID-4-2") != null) {
+                if (terser.get("NK1-4-2") != null) {
                     nokAddress.addLine(terser.get("NK1-4-2"));
                 }
-                if (terser.get("PID-4-3") != null) {
+                if (terser.get("NK1-4-3") != null) {
                     nokAddress.setCity(terser.get("NK1-4-3"));
                 }
-                if (terser.get("PID-4-4") != null) {
+                if (terser.get("NK1-4-4") != null) {
                     nokAddress.setState(terser.get("NK1-4-4"));
                 }
-                if (terser.get("PID-4-5") != null) {
+                if (terser.get("NK1-4-5") != null) {
                     nokAddress.setPostalCode(terser.get("NK1-4-5"));
                 }
                 nok.setAddress(nokAddress);
@@ -197,15 +187,18 @@ public class ADTParser {
 
             encounter = new Encounter();
             encounter.addIdentifier()
-                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" + terser.get("MSH-4-3"))
+                    .setSystem("https://fhir.experiments.com/System/MeditechVisitNumber/" + terser.get("MSH-4"))
                     .setValue(terser.get("PID-18"));
 
             if (terser.get("PV1-18") != null) {
-                if (terser.get("PV1-18").split(" ")[0].equalsIgnoreCase("REG")) {
+                if (("ADM".equalsIgnoreCase(terser.get("PV1-18"))) || ("REG".equalsIgnoreCase(terser.get("PV1-18")))) {
                     encounter.setStatus(Encounter.EncounterStatus.INPROGRESS);
                 }
-                else if (terser.get("PV1-18").split(" ")[0].equalsIgnoreCase("DEP")) {
+                if (("DIS".equalsIgnoreCase(terser.get("PV1-18"))) || ("DEP".equalsIgnoreCase(terser.get("PV1-18")))) {
                     encounter.setStatus(Encounter.EncounterStatus.FINISHED);
+                }
+                else if ("CAN".equalsIgnoreCase(terser.get("PV1-18"))) {
+                    encounter.setStatus(Encounter.EncounterStatus.CANCELLED);
                 }
             }
 
@@ -215,42 +208,42 @@ public class ADTParser {
                 if (terser.get("PV1-2").equalsIgnoreCase("I")) {
                     classCoding.setCode("IMP");
                 }
-                else if (terser.get("PV1-2").equalsIgnoreCase("O")) {
-                    classCoding.setCode("AMB");
-                }
                 else if (terser.get("PV1-2").equalsIgnoreCase("E")) {
                     classCoding.setCode("EMER");
+                }
+                else if (terser.get("PV1-2").equalsIgnoreCase("O")) {
+                    classCoding.setCode("AMB");
                 }
                 encounter.setClass_(classCoding);
             }
 
-            if (terser.get("PV1-18") != null) {
+            if ((terser.get("PV1-18") != null) && (terser.get("PV1-41") != null)) {
                 CodeableConcept type = new CodeableConcept();
-                type.addCoding().setCode(terser.get("PV1-18").split(" ")[0])
+                type.addCoding().setCode(terser.get("PV1-41"))
                         .setSystem("https://fhir.experiments.com/System/MeditechAccountStatus");
-                type.addCoding().setCode(terser.get("PV1-18").split(" ")[1])
+                type.addCoding().setCode(terser.get("PV1-18"))
                         .setSystem("https://fhir.experiments.com/System/MeditechPatientType");
                 encounter.addType(type);
             }
 
             if (terser.get("PV1-10") != null) {
                 CodeableConcept serviceTypeConcept = new CodeableConcept();
-                serviceTypeConcept.addCoding().setCode("PV1-10")
+                serviceTypeConcept.addCoding().setCode(terser.get("PV1-10"))
                         .setSystem("https://fhir.experiments.com/MedicalServiceType");
                 encounter.setServiceType(serviceTypeConcept);
             }
 
-            if (terser.get("PV2-3-2") != null)
-                encounter.addReasonCode().setText(terser.get("PV2-3-2"));
+            if (terser.get("PV2-3") != null)
+                encounter.addReasonCode().setText(terser.get("PV2-3"));
 
             if (terser.get("PV1-44") != null || terser.get("PV1-45") != null) {
                 try {
                     Period period = new Period();
                     if (terser.get("PV1-44") != null) {
-                        period.setStart(new SimpleDateFormat("yyyyMMddHHmmss").parse(terser.get("PV1-44")));
+                        period.setStart(new SimpleDateFormat("yyyyMMddHHmm").parse(terser.get("PV1-44")));
                     }
                     if (terser.get("PV1-45") != null) {
-                        period.setEnd(new SimpleDateFormat("yyyyMMddHHmmss").parse(terser.get("PV1-45")));
+                        period.setEnd(new SimpleDateFormat("yyyyMMddHHmm").parse(terser.get("PV1-45")));
                     }
                     encounter.setPeriod(period);
                 }
